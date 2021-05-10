@@ -128,7 +128,7 @@ end
 > you can identify which controller actions reuse the same logic, and extract
 > that logic to helper methods.
 
-## Summary
+## Conclusion
 
 With model validations in place, we can help protect our database against bad
 data. Active Record validations also help provide **error messages** to indicate
