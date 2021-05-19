@@ -99,8 +99,8 @@ Now, we get a different response after sending that same request in Postman:
 From the controller, `bird.errors` will give a serializable object with all the
 error messages from our Active Record validations.
 
-We also included status code of [422 Unprocessable Entity][422], indicating this
-was a bad request.
+We also included the status code of [422 Unprocessable Entity][422], indicating
+this was a bad request.
 
 [422]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/422
 
