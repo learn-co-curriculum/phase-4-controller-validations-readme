@@ -104,29 +104,72 @@ this was a bad request.
 
 [422]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/422
 
+We can clean up this controller action by handling the
+`ActiveRecord::RecordInvalid` exception class along with `create!` or `update!`:
+
+```rb
+def create
+  person = Person.create!(person_params)
+  render json: person, status: :created
+rescue ActiveRecord::RecordInvalid => invalid
+  render json: { errors: invalid.record.errors }, status: :unprocessable_entity
+end
+```
+
+In the `rescue` block, the `invalid` variable is an instance of the exception
+itself. From that `invalid` variable, we can access the actual Active Record
+instance with the `record` method, where we can retrieve its errors.
+
 We can take a similar approach to validation in our `update` method, since
 validations will also run when a model is updated:
 
 ```rb
 def update
-  bird = Bird.find_by(id: params[:id])
-  if bird
-    bird.update(bird_params)
-    if bird.valid?
-      render json: bird
-    else
-      render json: { errors: bird.errors }, status: :unprocessable_entity
-    end
-  else
-    render json: { error: "Bird not found" }, status: :not_found
-  end
+  bird = find_bird
+  bird.update!(bird_params)
+  render json: bird
+rescue ActiveRecord::RecordInvalid => invalid
+  render json: { errors: invalid.record.errors }, status: :unprocessable_entity
 end
 ```
 
-> At this point, our controller actions are getting a bit long! There are a few
-> opportunities for DRY-ing up this code by creating some helper methods. See if
-> you can identify which controller actions reuse the same logic, and extract
-> that logic to helper methods.
+We could also handle **all** `ActiveRecord::RecordInvalid` exceptions in the controller
+with the `rescue_from` method:
+
+```rb
+class BirdsController < ApplicationController
+  rescue_from ActiveRecord::RecordNotFound, with: :render_not_found_response
+  # added rescue_from
+  rescue_from ActiveRecord::RecordInvalid, with: :render_unprocessable_entity_response
+
+  # rest of controller actions...
+
+  private
+
+  def render_unprocessable_entity_response(invalid)
+    render json: { errors: invalid.record.errors }, status: :unprocessable_entity
+  end
+
+  # rest of private methods...
+end
+```
+
+Now, our `create` and `update` actions can focus on the happy path:
+
+```rb
+def create
+  # create! exceptions will be handled by the rescue_from ActiveRecord::RecordInvalid code
+  person = Person.create!(person_params)
+  render json: person, status: :created
+end
+
+def update
+  bird = find_bird
+  # update! exceptions will be handled by the rescue_from ActiveRecord::RecordInvalid code
+  bird.update!(bird_params)
+  render json: bird
+end
+```
 
 ## Conclusion
 
