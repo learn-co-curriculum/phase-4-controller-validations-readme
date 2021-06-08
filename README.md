@@ -171,6 +171,50 @@ def update
 end
 ```
 
+## Formatting the Error Response
+
+When we're sending back error messages, we should take care to format the error
+messages in a way that can be easily displayed by our frontend. Take another
+look at the current implementation:
+
+```rb
+render json: { errors: invalid.record.errors }, status: :unprocessable_entity
+```
+
+This will return a JSON object in the body of the response with a key of `errors`
+pointing to a nested object where the **keys** are the invalid attributes, and
+**values** are the validation error messages, like this:
+
+```json
+{
+  "errors": {
+    "name": ["can't be blank"],
+    "species": ["must be unique"]
+  }
+}
+```
+
+We could also return a different format by using the `#full_messages` method
+to output an array of pre-formatted error messages:
+
+```rb
+render json: { errors: invalid.record.errors.full_messages }, status: :unprocessable_entity
+```
+
+That would produce a slightly different output:
+
+```json
+{
+  "errors": ["Name can't be blank", "Species must be unique"]
+}
+```
+
+Notice in either case, the key on our JSON object is `errors` since we are
+returning a collection of error messages (either an object or an array).
+
+Which format you choose will depend largely on how you plan on using this data
+on the frontend. It's good to know you have options!
+
 ## Conclusion
 
 With model validations in place, we can help protect our database against bad
