@@ -109,8 +109,8 @@ We can clean up this controller action by handling the
 
 ```rb
 def create
-  person = Person.create!(person_params)
-  render json: person, status: :created
+  bird = Bird.create!(bird_params)
+  render json: bird, status: :created
 rescue ActiveRecord::RecordInvalid => invalid
   render json: { errors: invalid.record.errors }, status: :unprocessable_entity
 end
@@ -159,8 +159,8 @@ Now, our `create` and `update` actions can focus on the happy path:
 ```rb
 def create
   # create! exceptions will be handled by the rescue_from ActiveRecord::RecordInvalid code
-  person = Person.create!(person_params)
-  render json: person, status: :created
+  bird = Bird.create!(bird_params)
+  render json: bird, status: :created
 end
 
 def update
