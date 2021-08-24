@@ -15,10 +15,10 @@ request.
 
 To get set up, run:
 
-```sh
-bundle install
-rails db:migrate db:seed
-rails s
+```console
+$ bundle install
+$ rails db:migrate db:seed
+$ rails s
 ```
 
 ## Manually Checking Validation
