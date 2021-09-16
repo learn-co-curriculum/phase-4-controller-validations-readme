@@ -133,8 +133,9 @@ rescue ActiveRecord::RecordInvalid => invalid
 end
 ```
 
-We could also handle **all** `ActiveRecord::RecordInvalid` exceptions in the controller
-with the `rescue_from` method:
+We could also handle **all** `ActiveRecord::RecordInvalid` exceptions in the
+controller with the `rescue_from` method. We'll add it along with the
+`rescue_from` that we already implemented for `ActiveRecord::RecordNotFound`:
 
 ```rb
 class BirdsController < ApplicationController
@@ -223,3 +224,12 @@ why a certain value wasn't considered valid data. We can access the model's
 validity and error messages in the controller. By sending this data in the
 response, we'll be able to provide additional context to our clients about what
 went wrong with their request so they can fix it.
+
+## Check For Understanding
+
+Before you move on, make sure you can answer the following questions:
+
+1. If we have Active Record validations in place, what is the difference in how
+   validation errors will be handled if we use `create` vs. `create!`?
+2. In the following line of code, what is the `invalid` variable and how can we
+   use it: `rescue ActiveRecord::RecordInvalid => invalid`?
